@@ -195,6 +195,6 @@ $.DC VVIN 0V VSUP 0.001V SWEEP T 0 80 10 $ DC analysis with temperature sweeping
 .MEAS TRAN TG_OUT_TON TRIG V(TG_OUT) VAL='TG_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
 +                      TARG V(TG_OUT) VAL='TG_OUT_VPP*0.2' FALL=1
 ********** Power Comsumption **********
-.MEAS TRAN POWER_TOT AVG POWER FROM=15n TO=10n      $ Average total pwer measurement
+.MEAS TRAN POWER_TOT AVG POWER FROM=0n TO=10n      $ Average total pwer measurement
 
 .END    $EOF
