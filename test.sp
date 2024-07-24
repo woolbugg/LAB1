@@ -1,88 +1,215 @@
-TITLE TEST1 $ the test of the different between all same scale mos and one differ to others.
+TITLE LAB1
 
-********** PARAM **********
+********** Parameter **********
 .PARAM VSUP = 1.8V
-.PARAM WP_L = 30u
-.PARAM WN_L = 'WP_L/3'
-.PARAM WP_M = 9u
-.PARAM WN_M = 'WP_M/3'
-.PARAM WP_S = 1.5u
-.PARAM WN_S = 'WP_S/3'
+.PARAM T = 27
+.PARAM TSIM = 10n
+.PARAM WPN_RATIO = 3
 
-********** NAND_L **********
-.SUBCKT NAND_L IN1 IN2 OUT VDD GND
-MMPU1 OUT IN1 VDD VDD P_18_mm W=WP_L L=180n M=1
-MMPU2 OUT IN2 VDD VDD P_18_mm W=WP_L L=180n M=1
-MMPD1 OUT IN1 N1 GND N_18_mm W=WN_L L=180n M=1
-MMPD2 N1 IN2 GND GND N_18_mm W=WN_L L=180n M=1
-.ENDS
-********** NAND_M **********
-.SUBCKT NAND_M IN1 IN2 OUT VDD GND
-MMPU1 OUT IN1 VDD VDD P_18_mm W=WP_M L=180n M=1
-MMPU2 OUT IN2 VDD VDD P_18_mm W=WP_M L=180n M=1
-MMPD1 OUT IN1 N1 GND N_18_mm W=WN_M L=180n M=1
-MMPD2 N1 IN2 GND GND N_18_mm W=WN_M L=180n M=1
-.ENDS
-********** NAND_S **********
-.SUBCKT NAND_S IN1 IN2 OUT VDD GND
-MMPU1 OUT IN1 VDD VDD P_18_mm W=WP_S L=180n M=1
-MMPU2 OUT IN2 VDD VDD P_18_mm W=WP_S L=180n M=1
-MMPD1 OUT IN1 N1 GND N_18_mm W=WN_S L=180n M=1
-MMPD2 N1 IN2 GND GND N_18_mm W=WN_S L=180n M=1
+.PARAM WP_INV_IN = 150u
+.PARAM WP_INV = 15u
+.PARAM WP_NAND2 = 9u
+.PARAM WP_NOR2 = 9u
+.PARAM WP_NAND3 = 9u
+.PARAM WP_NOR3 = 9u
+.PARAM WP_TG = 9u
+
+********** INV_IN **********
+.SUBCKT INV_IN IN OUT VDD GND WIDTH=0.5u MUL=1
+MMPU OUT IN VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPD OUT IN GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
 .ENDS
 
-********** Circuit 1 **********
-XNAND1 VIN VDD L1N1 VDD GND NAND_M
-XNAND2 L1N1 VDD L1N2 VDD GND NAND_M
-XNAND3 L1N2 VDD NAND_OUT_1 VDD GND NAND_M
-CC3 NAND_OUT_1 GND 12f
+********** INV **********
+.SUBCKT INV IN OUT VDD GND WIDTH=0.5u MUL=1
+MMPU OUT IN VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPD OUT IN GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+.ENDS
 
-********** Circuit 2 **********
-XNAND4 VIN VDD L2N1 VDD GND NAND_L
-XNAND5 L2N1 VDD L2N2 VDD GND NAND_S
-XNAND6 L2N2 VDD NAND_OUT_2 VDD GND NAND_S
-CC3 NAND_OUT_2 GND 12f
+********** 2IN NAND **********
+.SUBCKT NAND2IN IN1 IN2 OUT VDD GND WIDTH=0.5u MUL=1
+MMPU1 OUT IN1 VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPU2 OUT IN2 VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPD1 OUT IN1 N1 GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+MMPD2 N1 IN2 GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+.ENDS
+
+********** 2IN NOR **********
+.SUBCKT NOR2IN IN1 IN2 OUT VDD GND WIDTH=0.5u MUL=1
+MMPU1 N1 IN1 VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPU2 OUT IN2 N1 VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPD1 OUT IN1 GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+MMPD2 OUT IN2 GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+.ENDS
+
+********** 3IN NAND **********
+.SUBCKT NAND3IN IN1 IN2 IN3 OUT VDD GND WIDTH=0.5u MUL=1
+MMPU1 OUT IN1 VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPU2 OUT IN2 VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPU3 OUT IN3 VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPD1 OUT IN1 N1 GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+MMPD2 N1 IN2 N2 GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+MMPD3 N2 IN3 GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+.ENDS
+
+********** 3IN NOR **********
+.SUBCKT NOR3IN IN1 IN2 IN3 OUT VDD GND WIDTH=0.5u MUL=1
+MMPU1 N1 IN1 VDD VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPU2 N2 IN2 N1 VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPU3 OUT IN3 N2 VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPD1 OUT IN1 GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+MMPD2 OUT IN2 GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+MMPD3 OUT IN3 GND GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+.ENDS
+
+********** TRANSMISSION GATE **********
+.SUBCKT TRANS IN OUT VDD GND WIDTH=0.5u MUL=1
+MMPU OUT GND IN VDD P_18_mm W=WIDTH L=180n M=MUL
+MMPD IN VDD OUT GND N_18_mm W='WIDTH/WPN_RATIO' L=180n M=MUL
+.ENDS
+
+********** CIRCUIT **********
+XINV1 VIN N1 VDD GND WIDTH=WP_INV_IN MUL=1 INV_IN
+XINV2 N1 D_OUT VDD GND WIDTH='2*WP_INV_IN' MUL=1 INV_IN
+CC1 D_OUT GND 3f
+
+XINV3 D_OUT L1N1 VDD GND WIDTH=WP_INV MUL=1 INV
+XINV4 L1N1 L1N2 VDD GND WIDTH='2*WP_INV' MUL=1 INV
+XINV5 L1N2 L1N3 VDD GND WIDTH='3*WP_INV' MUL=1 INV
+XINV6 L1N3 INV_OUT VDD GND WIDTH='4*WP_INV' MUL=1 INV
+CC2 INV_OUT GND 24f
+
+XNAND2IN1 D_OUT VDD L2N1 VDD GND WIDTH=WP_NAND2 MUL=1 NAND2IN
+XNAND2IN2 L2N1 VDD L2N2 VDD GND WIDTH='2*WP_NAND2' MUL=1 NAND2IN
+XNAND2IN3 L2N2 VDD NAND2_OUT VDD GND WIDTH='3*WP_NAND2' MUL=1 NAND2IN
+CC3 NAND2_OUT GND 12f
+
+XNOR2IN1 D_OUT GND L3N1 VDD GND WIDTH=WP_NOR2 MUL=1 NOR2IN
+XNOR2IN2 L3N1 GND L3N2 VDD GND WIDTH='2*WP_NOR2' MUL=1 NOR2IN
+XNOR2IN3 L3N2 GND NOR2_OUT VDD GND WIDTH='3*WP_NOR2' MUL=1 NOR2IN
+CC4 NOR2_OUT GND 12f
+
+XNAND3IN1 D_OUT VDD VDD L4N1 VDD GND WIDTH=WP_NAND3 MUL=1 NAND3IN
+XNAND3IN2 L4N1 VDD VDD NAND3_OUT VDD GND WIDTH='2*WP_NAND3' MUL=1 NAND3IN
+CC5 NAND3_OUT GND 6f
+
+XNOR3IN1 D_OUT GND GND L5N1 VDD GND WIDTH=WP_NOR3 MUL=1 NOR3IN
+XNOR3IN2 L5N1 GND GND NOR3_OUT VDD GND WIDTH='2*WP_NOR3' MUL=1 NOR3IN
+CC6 NOR3_OUT GND 6f
+
+XTRANS1 D_OUT L6N1 VDD GND WIDTH=WP_TG MUL=1 TRANS
+XINV7 L6N1 TG_OUT VDD GND WIDTH=WP_TG MUL=1 INV
+CC7 TG_OUT GND 6f
+
 ********** Process and Temperature **********
 .PROTECT $ keep models private (so that *.lis file will not contain the information of spice model)
 .LIB '/misc/vlsisoc-data/techfile/TSRI_U18/02_Design_kit/05_Cadence_Foundry_Design_Kit_FDK_OA/UM180FDKMFC00000OA_B02/Models/Hspice/mm180_reg18_v124.lib' TT
 .UNPROTECT
 .TEMP T
+
 ********** Supply and Stimuli **********
 VVDD VDD GND VSUP
 VVIN VIN GND PULSE(0V VSUP 0n 2.5p 2.5p 0.5n 1n)
+
 ********** Command Options **********
 .OP                 $ Print operating point analysis data to *.lis file
-.OPTION POST        $ Generate graph file (*.tr#, *.ms#, *.ac#)
+$.OPTION POST        $ Generate graph file (*.tr#, *.ms#, *.ac#)
 .OPTION FAST        $ Fast simulation
 $.OPTION ACCURATE   $ Higher simulation accuracy
 $.OPTION CAPTAB     $ Print node capacitance
 
 ********** Analysis **********
 .TRAN 0.5p TSIM 
-********** NAND_OUT_1 **********
-.MEAS TRAN NAND_OUT_1_MAX MAX V(NAND_OUT_1) FROM=0n TO=5n   $ Maximal value of signal 'OUT'
-.MEAS TRAN NAND_OUT_1_MIN MIN V(NAND_OUT_1) FROM=0n TO=5n   $ Minimal value of signal 'OUT'
-.MEAS TRAN NAND_OUT_1_VPP PARAM='NAND_OUT_1_MAX-NAND_OUT_1_MIN'      $ Peak-to-Peak value of signal 'OUT'
-.MEAS TRAN NAND_OUT_1_VDC PARAM='NAND_OUT_1_VPP/2+NAND_OUT_1_MIN'    $ DC component of signal 'OUT'
+$.TRAN 0.01n 100n SWEEP T 0 80 10        $ Transient analysis with temperature sweeping
+$.DC VVIN 0V VSUP 0.001V SWEEP T 0 80 10 $ DC analysis with temperature sweeping
 
-.MEAS TRAN NAND_OUT_1_TRISE TRIG V(NAND_OUT_1) VAL='NAND_OUT_1_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
-+                      TARG V(NAND_OUT_1) VAL='NAND_OUT_1_VPP*0.8' RISE=2
-.MEAS TRAN NAND_OUT_1_TFALL TRIG V(NAND_OUT_1) VAL='NAND_OUT_1_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
-+                      TARG V(NAND_OUT_1) VAL='NAND_OUT_1_VPP*0.2' FALL=2
-.MEAS TRAN NAND_OUT_1_TON TRIG V(NAND_OUT_1) VAL='NAND_OUT_1_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
-+                    TARG V(NAND_OUT_1) VAL='NAND_OUT_1_VPP*0.2' FALL=1
-********** NAND_OUT_2 **********
-.MEAS TRAN NAND_OUT_2_MAX MAX V(NAND_OUT_2) FROM=0n TO=5n   $ Maximal value of signal 'OUT'
-.MEAS TRAN NAND_OUT_2_MIN MIN V(NAND_OUT_2) FROM=0n TO=5n   $ Minimal value of signal 'OUT'
-.MEAS TRAN NAND_OUT_2_VPP PARAM='NAND_OUT_2_MAX-NAND_OUT_2_MIN'      $ Peak-to-Peak value of signal 'OUT'
-.MEAS TRAN NAND_OUT_2_VDC PARAM='NAND_OUT_2_VPP/2+NAND_OUT_2_MIN'    $ DC component of signal 'OUT'
+********** Measurement **********
+********** D_OUT **********
+.MEAS TRAN D_OUT_MAX MAX V(D_OUT) FROM=0n TO=TSIM   $ Maximal value of signal 'OUT'
+.MEAS TRAN D_OUT_MIN MIN V(D_OUT) FROM=0n TO=TSIM   $ Minimal value of signal 'OUT'
+.MEAS TRAN D_OUT_VPP PARAM='D_OUT_MAX-D_OUT_MIN'      $ Peak-to-Peak value of signal 'OUT'
+.MEAS TRAN D_OUT_VDC PARAM='D_OUT_VPP/2+D_OUT_MIN'    $ DC component of signal 'OUT'
 
-.MEAS TRAN NAND_OUT_2_TRISE TRIG V(NAND_OUT_2) VAL='NAND_OUT_2_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
-+                      TARG V(NAND_OUT_2) VAL='NAND_OUT_2_VPP*0.8' RISE=2
-.MEAS TRAN NAND_OUT_2_TFALL TRIG V(NAND_OUT_2) VAL='NAND_OUT_2_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
-+                      TARG V(NAND_OUT_2) VAL='NAND_OUT_2_VPP*0.2' FALL=2
-.MEAS TRAN NAND_OUT_2_TON TRIG V(NAND_OUT_2) VAL='NAND_OUT_2_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
-+                    TARG V(NAND_OUT_2) VAL='NAND_OUT_2_VPP*0.2' FALL=1
+.MEAS TRAN D_OUT_TRISE TRIG V(D_OUT) VAL='D_OUT_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
++                      TARG V(D_OUT) VAL='D_OUT_VPP*0.8' RISE=2
+.MEAS TRAN D_OUT_TFALL TRIG V(D_OUT) VAL='D_OUT_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
++                      TARG V(D_OUT) VAL='D_OUT_VPP*0.2' FALL=2
+.MEAS TRAN D_OUT_TON TRIG V(D_OUT) VAL='D_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
++                    TARG V(D_OUT) VAL='D_OUT_VPP*0.2' FALL=1
+********** INV_OUT **********
+.MEAS TRAN INV_OUT_MAX MAX V(INV_OUT) FROM=0n TO=TSIM   $ Maximal value of signal 'OUT'
+.MEAS TRAN INV_OUT_MIN MIN V(INV_OUT) FROM=0n TO=TSIM   $ Minimal value of signal 'OUT'
+.MEAS TRAN INV_OUT_VPP PARAM='INV_OUT_MAX-INV_OUT_MIN'      $ Peak-to-Peak value of signal 'OUT'
+.MEAS TRAN INV_OUT_VDC PARAM='INV_OUT_VPP/2+INV_OUT_MIN'    $ DC component of signal 'OUT'
 
+.MEAS TRAN INV_OUT_TRISE TRIG V(INV_OUT) VAL='INV_OUT_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
++                        TARG V(INV_OUT) VAL='INV_OUT_VPP*0.8' RISE=2
+.MEAS TRAN INV_OUT_TFALL TRIG V(INV_OUT) VAL='INV_OUT_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
++                        TARG V(INV_OUT) VAL='INV_OUT_VPP*0.2' FALL=2
+.MEAS TRAN INV_OUT_TON TRIG V(INV_OUT) VAL='INV_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
++                      TARG V(INV_OUT) VAL='INV_OUT_VPP*0.2' FALL=1
+
+********** NAND2_OUT **********
+.MEAS TRAN NAND2_OUT_MAX MAX V(NAND2_OUT) FROM=0n TO=TSIM   $ Maximal value of signal 'OUT'
+.MEAS TRAN NAND2_OUT_MIN MIN V(NAND2_OUT) FROM=0n TO=TSIM   $ Minimal value of signal 'OUT'
+.MEAS TRAN NAND2_OUT_VPP PARAM='NAND2_OUT_MAX-NAND2_OUT_MIN'      $ Peak-to-Peak value of signal 'OUT'
+.MEAS TRAN NAND2_OUT_VDC PARAM='NAND2_OUT_VPP/2+NAND2_OUT_MIN'    $ DC component of signal 'OUT'
+
+.MEAS TRAN NAND2_OUT_TRISE TRIG V(NAND2_OUT) VAL='NAND2_OUT_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
++                          TARG V(NAND2_OUT) VAL='NAND2_OUT_VPP*0.8' RISE=2
+.MEAS TRAN NAND2_OUT_TFALL TRIG V(NAND2_OUT) VAL='NAND2_OUT_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
++                          TARG V(NAND2_OUT) VAL='NAND2_OUT_VPP*0.2' FALL=2
+.MEAS TRAN NAND2_OUT_TON TRIG V(NAND2_OUT) VAL='NAND2_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
++                        TARG V(NAND2_OUT) VAL='NAND2_OUT_VPP*0.2' FALL=1
+********** NOR2_OUT **********
+.MEAS TRAN NOR2_OUT_MAX MAX V(NOR2_OUT) FROM=0n TO=TSIM   $ Maximal value of signal 'OUT'
+.MEAS TRAN NOR2_OUT_MIN MIN V(NOR2_OUT) FROM=0n TO=TSIM   $ Minimal value of signal 'OUT'
+.MEAS TRAN NOR2_OUT_VPP PARAM='NOR2_OUT_MAX-NOR2_OUT_MIN'      $ Peak-to-Peak value of signal 'OUT'
+.MEAS TRAN NOR2_OUT_VDC PARAM='NOR2_OUT_VPP/2+NOR2_OUT_MIN'    $ DC component of signal 'OUT'
+
+.MEAS TRAN NOR2_OUT_TRISE TRIG V(NOR2_OUT) VAL='NOR2_OUT_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
++                        TARG V(NOR2_OUT) VAL='NOR2_OUT_VPP*0.8' RISE=2
+.MEAS TRAN NOR2_OUT_TFALL TRIG V(NOR2_OUT) VAL='NOR2_OUT_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
++                        TARG V(NOR2_OUT) VAL='NOR2_OUT_VPP*0.2' FALL=2
+.MEAS TRAN NOR2_OUT_TON TRIG V(NOR2_OUT) VAL='NOR2_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
++                      TARG V(NOR2_OUT) VAL='NOR2_OUT_VPP*0.2' FALL=1
+********** NAND3_OUT **********
+.MEAS TRAN NAND3_OUT_MAX MAX V(NAND3_OUT) FROM=0n TO=TSIM   $ Maximal value of signal 'OUT'
+.MEAS TRAN NAND3_OUT_MIN MIN V(NAND3_OUT) FROM=0n TO=TSIM   $ Minimal value of signal 'OUT'
+.MEAS TRAN NAND3_OUT_VPP PARAM='NAND3_OUT_MAX-NAND3_OUT_MIN'      $ Peak-to-Peak value of signal 'OUT'
+.MEAS TRAN NAND3_OUT_VDC PARAM='NAND3_OUT_VPP/2+NAND3_OUT_MIN'    $ DC component of signal 'OUT'
+
+.MEAS TRAN NAND3_OUT_TRISE TRIG V(NAND3_OUT) VAL='NAND3_OUT_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
++                        TARG V(NAND3_OUT) VAL='NAND3_OUT_VPP*0.8' RISE=2
+.MEAS TRAN NAND3_OUT_TFALL TRIG V(NAND3_OUT) VAL='NAND3_OUT_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
++                        TARG V(NAND3_OUT) VAL='NAND3_OUT_VPP*0.2' FALL=2
+.MEAS TRAN NAND3_OUT_TON TRIG V(NAND3_OUT) VAL='NAND3_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
++                      TARG V(NAND3_OUT) VAL='NAND3_OUT_VPP*0.2' FALL=1
+********** NOR3_OUT **********
+.MEAS TRAN NOR3_OUT_MAX MAX V(NOR3_OUT) FROM=0n TO=TSIM   $ Maximal value of signal 'OUT'
+.MEAS TRAN NOR3_OUT_MIN MIN V(NOR3_OUT) FROM=0n TO=TSIM   $ Minimal value of signal 'OUT'
+.MEAS TRAN NOR3_OUT_VPP PARAM='NOR3_OUT_MAX-NOR3_OUT_MIN'      $ Peak-to-Peak value of signal 'OUT'
+.MEAS TRAN NOR3_OUT_VDC PARAM='NOR3_OUT_VPP/2+NOR3_OUT_MIN'    $ DC component of signal 'OUT'
+
+.MEAS TRAN NOR3_OUT_TRISE TRIG V(NOR3_OUT) VAL='NOR3_OUT_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
++                        TARG V(NOR3_OUT) VAL='NOR3_OUT_VPP*0.8' RISE=2
+.MEAS TRAN NOR3_OUT_TFALL TRIG V(NOR3_OUT) VAL='NOR3_OUT_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
++                        TARG V(NOR3_OUT) VAL='NOR3_OUT_VPP*0.2' FALL=2
+.MEAS TRAN NOR3_OUT_TON TRIG V(NOR3_OUT) VAL='NOR3_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
++                      TARG V(NOR3_OUT) VAL='NOR3_OUT_VPP*0.2' FALL=1
+********** TG_OUT **********
+.MEAS TRAN TG_OUT_MAX MAX V(TG_OUT) FROM=0n TO=TSIM   $ Maximal value of signal 'OUT'
+.MEAS TRAN TG_OUT_MIN MIN V(TG_OUT) FROM=0n TO=TSIM   $ Minimal value of signal 'OUT'
+.MEAS TRAN TG_OUT_VPP PARAM='TG_OUT_MAX-TG_OUT_MIN'      $ Peak-to-Peak value of signal 'OUT'
+.MEAS TRAN TG_OUT_VDC PARAM='TG_OUT_VPP/2+TG_OUT_MIN'    $ DC component of signal 'OUT'
+
+.MEAS TRAN TG_OUT_TRISE TRIG V(TG_OUT) VAL='TG_OUT_VPP*0.2' RISE=2   $ Rise time measurement of the signal 'OUT'
++                        TARG V(TG_OUT) VAL='TG_OUT_VPP*0.8' RISE=2
+.MEAS TRAN TG_OUT_TFALL TRIG V(TG_OUT) VAL='TG_OUT_VPP*0.8' FALL=2   $ Fall time measurement of the signal 'OUT'
++                        TARG V(TG_OUT) VAL='TG_OUT_VPP*0.2' FALL=2
+.MEAS TRAN TG_OUT_TON TRIG V(TG_OUT) VAL='TG_OUT_VPP*0.8' RISE=1   $ On-time measurement of the signal 'OUT'
++                      TARG V(TG_OUT) VAL='TG_OUT_VPP*0.2' FALL=1
+********** Power Comsumption **********
 .MEAS TRAN POWER_TOT AVG POWER FROM=0n TO=TSIM      $ Average total pwer measurement
-.END
+
+.END    $EOF
